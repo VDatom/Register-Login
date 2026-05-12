@@ -170,6 +170,22 @@ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:10px;font-fa
 .phone-row{display:flex;gap:6px;}
 .phone-pre{width:82px;padding:9px 8px;border:0.5px solid #d1d5db;border-radius:8px;font-size:12px;background:#f9fafb;color:#111827;}
 
+/* ─── CHECKBOX FIELDS (v7.1 — added for T&C + marketing consent) ─── */
+.cb-field{display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;padding:2px 0;}
+.cb-field input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:16px;height:16px;min-width:16px;border:1.5px solid #d1d5db;border-radius:4px;background:white;cursor:pointer;margin-top:1px;position:relative;transition:all .12s;font-family:inherit;}
+.cb-field input[type="checkbox"]:hover{border-color:#c0392b;}
+.cb-field input[type="checkbox"]:checked{background:#c0392b;border-color:#c0392b;}
+.cb-field input[type="checkbox"]:checked::after{content:'';position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg);}
+.cb-field input[type="checkbox"].err{border-color:#e24b4a;background:#fff5f5;}
+.cb-field input[type="checkbox"].shake{animation:shake .35s ease;}
+.cb-field label{font-size:11px;color:#374151;line-height:1.55;cursor:pointer;flex:1;user-select:none;}
+.cb-field label a{color:#c0392b;text-decoration:underline;text-underline-offset:2px;font-weight:500;}
+.cb-field label a:hover{color:#a93226;}
+.cb-field label .req-star{color:#c0392b;font-weight:600;}
+.cb-field label .opt-mark{color:#9ca3af;font-size:10px;font-weight:500;}
+.cb-err{font-size:11px;color:#e24b4a;margin:-4px 0 8px 25px;display:none;}
+.cb-err.show{display:block;}
+
 .dots{display:none;gap:5px;margin-top:5px;justify-content:center;}
 .dots.show{display:flex;}
 .dot{width:8px;height:8px;border-radius:50%;background:#e5e7eb;transition:background .2s;}
@@ -331,7 +347,7 @@ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:10px;font-fa
 <div class="legend">
   <b>Login:</b> any valid email + password → Homepage &nbsp;|&nbsp; <code>wrong@test.com</code> → not found &nbsp;|&nbsp; <code>unverified@test.com</code> → unverified &nbsp;|&nbsp; password = <code>wrongpassword</code> → attempt counter / lock <span class="tag te">error states</span><br>
   <b>Forgot password:</b> <code>notfound@test.com</code> → not registered &nbsp;|&nbsp; <code>unverified@test.com</code> → unverified &nbsp;|&nbsp; any other email → reset link sent → click link → set new password → back to login <span class="tag tw">full journey</span><br>
-  <b>Register:</b> <code>existing-unverified@test.com</code> → unverified duplicate &nbsp;|&nbsp; <code>existing@company.com</code> → verified duplicate <span class="tag te">duplicate scenarios</span><br>
+  <b>Register:</b> <code>existing-unverified@test.com</code> → unverified duplicate &nbsp;|&nbsp; <code>existing@company.com</code> → verified duplicate &nbsp;|&nbsp; <b>Terms checkbox is mandatory</b> — leave it unchecked to see the error <span class="tag te">duplicate + consent</span><br>
   <b style="color:#6b21a8;">NEW — Expired link screens:</b> on Verify Email and "Reset link sent" screens, click <b>"Simulate: link expired"</b> to preview the expired-link UI <span class="tag tnew">v6 addition</span><br>
   <b style="color:#9f1239;">v7 — Registration expired:</b> on Verify Email screen, click <b>"Simulate: registration expired (after 7 days)"</b> to preview the deleted-account state <span class="tag te">v7 addition</span>
 </div>
@@ -586,6 +602,19 @@ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:10px;font-fa
     <div class="field"><label>Password</label><div class="pw"><input class="fi" type="password" id="rg-pass" placeholder="At least 8 characters"><button class="eyeb" onclick="togglePw('rg-pass')" tabindex="-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="ferr" id="rg-pass-e">Password must be at least 8 characters</div></div>
     <div class="field"><label>Confirm password</label><div class="pw"><input class="fi" type="password" id="rg-pass2" placeholder="Repeat your password"><button class="eyeb" onclick="togglePw('rg-pass2')" tabindex="-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg></button></div><div class="ferr" id="rg-pass2-e">Passwords do not match — please re-enter</div></div>
     <div class="field"><label>Country</label><select class="fi"><option>India</option><option>United States</option><option>UAE</option><option>Singapore</option></select></div>
+
+    <!-- ─── CONSENT CHECKBOXES (v7.1) ─── -->
+    <div class="cb-field" style="margin-top:6px;">
+      <input type="checkbox" id="rg-terms" onchange="rgTermsChange()">
+      <label for="rg-terms">I agree to the <a href="#" onclick="event.preventDefault();">Terms &amp; Conditions</a> and <a href="#" onclick="event.preventDefault();">Privacy Policy</a> <span class="req-star">*</span></label>
+    </div>
+    <div class="cb-err" id="rg-terms-e">You must accept the Terms &amp; Conditions and Privacy Policy to register</div>
+
+    <div class="cb-field" style="margin-bottom:12px;">
+      <input type="checkbox" id="rg-marketing">
+      <label for="rg-marketing">I'd like to receive marketing emails from Amar Radio Corporation about new products, offers and updates <span class="opt-mark">(optional)</span></label>
+    </div>
+
     <button class="brd" id="rg-btn" onclick="doRegister()"><span id="rg-txt">Create account</span></button>
     <div class="divrow"><div class="dl"></div><span class="dt">already have an account?</span><div class="dl"></div></div>
     <button class="bro" onclick="goScreen('login')">Sign in instead</button>
@@ -643,7 +672,7 @@ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:10px;font-fa
 </div>
 </div>
 
-<!-- ═══════════════════════════════════ EXPIRED LINK SCREEN (NEW) ═══════════════════════════════════ -->
+<!-- ═══════════════════════════════════ EXPIRED LINK SCREEN ═══════════════════════════════════ -->
 <div id="screen-expired" class="screen">
 <div class="card">
   <div class="fp" style="align-items:center;text-align:center;">
@@ -714,7 +743,7 @@ code{background:#f3f4f6;padding:1px 5px;border-radius:4px;font-size:10px;font-fa
 </div>
 </div>
 
-<!-- ═══════════════════════════════════ REGISTRATION EXPIRED SCREEN (v7 NEW) ═══════════════════════════════════ -->
+<!-- ═══════════════════════════════════ REGISTRATION EXPIRED SCREEN ═══════════════════════════════════ -->
 <div id="screen-reg-expired" class="screen">
 <div class="card">
   <div class="fp" style="align-items:center;text-align:center;">
@@ -935,7 +964,7 @@ function doExpiredResend(){
   },1400);
 }
 
-/* ── REGISTRATION EXPIRED (v7) ── */
+/* ── REGISTRATION EXPIRED ── */
 function goRegExpired(){
   document.getElementById('rge-email-txt').textContent=uEmail;
   goScreen('reg-expired');
@@ -949,6 +978,11 @@ function rgeRestart(){
   document.getElementById('rg-email').className='fi';
   document.getElementById('rg-unverified').classList.remove('show');
   document.getElementById('rg-verified').classList.remove('show');
+  /* also reset the consent checkboxes when restarting */
+  document.getElementById('rg-terms').checked=false;
+  document.getElementById('rg-terms').classList.remove('err');
+  document.getElementById('rg-terms-e').classList.remove('show');
+  document.getElementById('rg-marketing').checked=false;
   goScreen('register');
   /* tiny visual cue: focus the company field since email is pre-filled */
   setTimeout(function(){var c=document.getElementById('rg-company');if(c)c.focus();},400);
@@ -1119,17 +1153,35 @@ function doNewPass(){
 
 /* ── REGISTER ── */
 function rgEmailInput(){clrFi('rg-email');clearFE('rg-email-e');document.getElementById('rg-unverified').classList.remove('show');document.getElementById('rg-verified').classList.remove('show');}
+
+/* clears the terms-checkbox error state when user ticks it */
+function rgTermsChange(){
+  var cb=document.getElementById('rg-terms');
+  if(cb.checked){
+    cb.classList.remove('err');
+    document.getElementById('rg-terms-e').classList.remove('show');
+  }
+}
+
 function doRegister(){
   var name=document.getElementById('rg-name').value.trim();
   var email=document.getElementById('rg-email').value.trim();
   var pass=document.getElementById('rg-pass').value;
   var pass2=document.getElementById('rg-pass2').value;
+  var termsOk=document.getElementById('rg-terms').checked;
   var ok=true;
   document.getElementById('rg-unverified').classList.remove('show');document.getElementById('rg-verified').classList.remove('show');
   if(!name){document.getElementById('rg-name').classList.add('err');showFE('rg-name-e');shake('rg-name');ok=false;}
   if(!email||!email.includes('@')){document.getElementById('rg-email').classList.add('err');showFE('rg-email-e');shake('rg-email');ok=false;}
   if(pass.length<8){document.getElementById('rg-pass').classList.add('err');showFE('rg-pass-e');shake('rg-pass');ok=false;}
   if(pass!==pass2){document.getElementById('rg-pass2').classList.add('err');showFE('rg-pass2-e');shake('rg-pass2');ok=false;}
+  /* mandatory T&C / privacy consent */
+  if(!termsOk){
+    document.getElementById('rg-terms').classList.add('err');
+    document.getElementById('rg-terms-e').classList.add('show');
+    shake('rg-terms');
+    ok=false;
+  }
   if(!ok)return;
   setBtn('rg-btn','rg-txt',true,'Creating account\u2026');
   setTimeout(function(){
@@ -1175,6 +1227,11 @@ function resetAll(){
   document.getElementById('li-btn').disabled=false;document.getElementById('li-txt').textContent='Sign in';
   ['rg-name','rg-email','rg-pass','rg-pass2'].forEach(function(id){document.getElementById(id).value='';document.getElementById(id).className='fi';});
   document.getElementById('rg-unverified').classList.remove('show');document.getElementById('rg-verified').classList.remove('show');
+  /* reset consent checkboxes too (v7.1) */
+  document.getElementById('rg-terms').checked=false;
+  document.getElementById('rg-terms').classList.remove('err');
+  document.getElementById('rg-terms-e').classList.remove('show');
+  document.getElementById('rg-marketing').checked=false;
   document.getElementById('fpe-em').value='';document.getElementById('fpe-em').className='fi';clearFE('fpe-em-e');
   document.getElementById('fpe-bd').classList.remove('show');document.getElementById('fpe-bw').classList.remove('show');
   document.getElementById('np-p1').value='';document.getElementById('np-p2').value='';
